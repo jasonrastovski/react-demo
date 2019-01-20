@@ -6,6 +6,7 @@ import User from "./ClientApp/modules/users/models";
 import NavBar from "./ClientApp/modules/common/navbar";
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from '@material-ui/core/Grid';
+import LinearProgress from "@material-ui/core/LinearProgress/LinearProgress";
 
 class App extends Component {
   state = {
@@ -42,16 +43,16 @@ class App extends Component {
     return (
       <>
         <NavBar />
-        <div className="App" />        
-        <Paper elevation={5}>
-          {isFetching
-            ? "Loading..."
-            :
+        <div className="App" />
+        {isFetching
+          ? <LinearProgress />
+          :
+          <Paper elevation={5}>
             <Grid container spacing={16}>
               {gridItems}
             </Grid>
-          }
-        </Paper>
+          </Paper>
+        }
       </>
     );
   }
