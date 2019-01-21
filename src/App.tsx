@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import "./App.css";
 import UserInformation from "./ClientApp/modules/users/components/userInformation";
@@ -7,27 +7,19 @@ import NavBar from "./ClientApp/modules/common/navbar";
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from "@material-ui/core/LinearProgress/LinearProgress";
-import { UserApplicationState } from "./ClientApp/actions";
 
-class App extends Component {
-  state = {
-    users: [] as User[],
-    isFetching: true
-  };
+import { connect } from "react-redux";
+import { UserApplicationState } from "./ClientApp/store";
+import { loadUsers } from "./ClientApp/modules/users/actionCreator";
+
+class App extends React.Component<AppProps> {
 
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then(response => response.json())
-      .then(data => {
-        setTimeout(() => {
-          this.setState({ users: data, isFetching: false });
-        }, 1500);
-      });
+    setTimeout(this.props.loadUsers(), 1000);
   }
 
-  render() {
-
-    const { users, isFetching } = this.state;
+  render() {    
+    const { users, isLoading } = this.props;
 
     const gridItems = users.map((user: User, index) => {
       return (
@@ -41,25 +33,24 @@ class App extends Component {
       );
     });
 
-    return (
-      <>
-        <NavBar />
-        <div className="App" />
-        {isFetching
-          ? <LinearProgress />
+    return (<>>
+      <NavBar />
+      <div className="App" />
+      {
+        isLoading
+          ? <LinearProgress /> 
           :
           <Paper elevation={5}>
             <Grid container spacing={16}>
               {gridItems}
             </Grid>
           </Paper>
-        }
-      </>
+      }</>
     );
   }
 
   onChange = (id: number, propertyName: string, newValue: string) => {
-    var updatedUsers = this.state.users.map(user => {
+    var updatedUsers = this.props.users.map(user => {
       if (user.id == id) {
         return {
           username: user.username,
@@ -78,11 +69,33 @@ class App extends Component {
       };
     });
   };
-  
+
 }
 
-const mapStateToProps = (state:UserApplicationState) => { 
+interface AppStateProps {
+  users: User[];
+  isLoading: boolean;
+}
 
+interface AppDispatchProps {  
+  loadUsers: () => any;
+}
+
+type AppProps = AppStateProps & AppDispatchProps;
+
+const mapStateToProps = (state: UserApplicationState) => {
+  return {
+    users: state.users,
+    isLoading: state.isLoading
+  }
 };
 
-export default App;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    loadUsers: () => {
+      dispatch(loadUsers());
+    }
+  }
+};
+
+export default connect<any, any, any, any>(mapStateToProps, mapDispatchToProps)(App);
