@@ -7,6 +7,7 @@ import NavBar from "./ClientApp/modules/common/navbar";
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from "@material-ui/core/LinearProgress/LinearProgress";
+import { UserApplicationState } from "./ClientApp/actions";
 
 class App extends Component {
   state = {
@@ -77,6 +78,11 @@ class App extends Component {
       };
     });
   };
+  
 }
+
+const mapStateToProps = (state:UserApplicationState) => { 
+
+};
 
 export default App;
